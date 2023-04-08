@@ -32,12 +32,20 @@ public class GameBoard extends JPanel implements GameConstants {
 	}
 
 	private void gameLoop(){
-		timer = new Timer(70, new ActionListener() {
+		timer = new Timer(50, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				repaint();
+				if(player.getX()>oppPlayer.getX())
+				{
+					player.jump();
+					// player.flipPlayer();
+					// oppPlayer.flipPlayer();
+					repaint();
+				}
 				player.fall();
+				oppPlayer.fall();
 			}
 
 		} );
@@ -49,7 +57,8 @@ public class GameBoard extends JPanel implements GameConstants {
 		//System.out.println("Paint Component...");
 		paintBackground(pen);
 		player.paintPlayer(pen);
-		oppPlayer.paintPlayer(pen);
+		// oppPlayer.flipPlayer();
+		oppPlayer.paintFlipPlayer(pen);
 	}
 	private void paintBackground(Graphics pen) {
 		
@@ -66,12 +75,12 @@ public class GameBoard extends JPanel implements GameConstants {
 			
 			@Override
 			public void keyTyped(KeyEvent e) {
-				System.out.println("Key Typed : " + e.getKeyCode());
+				// System.out.println("Key Typed : " + e.getKeyCode());
 			}
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				System.out.println("Key Released : " + e.getKeyCode());
+				// System.out.println("Key Released : " + e.getKeyCode());
 				player.setSpeed(0);
 			}
 			
@@ -79,29 +88,37 @@ public class GameBoard extends JPanel implements GameConstants {
 			public void keyPressed(KeyEvent e) {
 				//System.out.println("Key Pressed : " + e.getKeyCode());
 				if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+					player.setCurrentMove(WALK);
 					player.setSpeed(-SPEED);
 					player.move();
-					player.setCurrentMove(WALK);
 					repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					player.setCurrentMove(WALK);
 					player.setSpeed(SPEED);
 					player.move();
-					player.setCurrentMove(WALK);
 					repaint();
 				}
 				
 				if(e.getKeyCode() == KeyEvent.VK_A) {
+					oppPlayer.setCurrentMove(WALK);
 					oppPlayer.setSpeed(-SPEED);
 					oppPlayer.move();
-					player.setCurrentMove(WALK);
 					repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_D) {
+					oppPlayer.setCurrentMove(WALK);
 					oppPlayer.setSpeed(SPEED);
 					oppPlayer.move();
-					player.setCurrentMove(WALK);
 					repaint();
+				}
+				else if(e.getKeyCode() == KeyEvent.VK_UP) {
+					// player.setCurrentMove(JUMP);
+					player.jump();
+				}
+				else if(e.getKeyCode() == KeyEvent.VK_W) {
+					// player.setCurrentMove(JUMP);
+					oppPlayer.jump();
 				}
 			}
 		});

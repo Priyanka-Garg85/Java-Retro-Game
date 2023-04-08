@@ -42,11 +42,13 @@ public abstract class CommonPlayer implements GameConstants {
 	
 	public BufferedImage getPlayerImg() {return playerImg;}
 	public void setPlayerImg(BufferedImage playerImg) {this.playerImg = playerImg;}
+	public void flipPlayerImg() {this.playerImg = flip(defaultImage());}
 	
 	public void move() {x = x + speed;}
-	public void jump() {force = -50; y = y + force;}
+	public void jump() {force = -10; y = y + force;}
 	public void fall() {
 		if(y + force > GROUND) {
+			y = GROUND;
 			return;
 		}
 		force = force + GRAVITY;
@@ -55,6 +57,9 @@ public abstract class CommonPlayer implements GameConstants {
 	
 	public void paintPlayer(Graphics pen) {
 		pen.drawImage(defaultImage(), x, y, w, h, null);
+	}
+	public void paintFlipPlayer(Graphics pen) {
+		pen.drawImage(flip(defaultImage()), x, y, w, h, null);
 	}
 
 	public BufferedImage defaultImage() {
@@ -67,6 +72,16 @@ public abstract class CommonPlayer implements GameConstants {
 		else {
 			return printIdle();
 		}
+	}
+
+	public BufferedImage flip(BufferedImage sprite) {
+        BufferedImage img = new BufferedImage(sprite.getWidth(),sprite.getHeight(),BufferedImage.TYPE_INT_ARGB);
+		for(int xx = sprite.getWidth()-1;xx>0;xx--) {
+			for(int yy = 0;yy < sprite.getHeight();yy++) {
+				img.setRGB(sprite.getWidth()-xx, yy, sprite.getRGB(xx, yy));
+			}
+		}
+		return img;
 	}
 
 }
