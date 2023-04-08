@@ -32,7 +32,7 @@ public class GameBoard extends JPanel implements GameConstants {
 	}
 
 	private void gameLoop(){
-		timer = new Timer(70, new ActionListener() {
+		timer = new Timer(100, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
@@ -49,7 +49,7 @@ public class GameBoard extends JPanel implements GameConstants {
 		//System.out.println("Paint Component...");
 		paintBackground(pen);
 		player.paintPlayer(pen);
-		oppPlayer.paintPlayer(pen);
+		oppPlayer.paintFlipPlayer(pen);
 	}
 	private void paintBackground(Graphics pen) {
 		
@@ -66,12 +66,12 @@ public class GameBoard extends JPanel implements GameConstants {
 			
 			@Override
 			public void keyTyped(KeyEvent e) {
-				System.out.println("Key Typed : " + e.getKeyCode());
+				// System.out.println("Key Typed : " + e.getKeyCode());
 			}
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				System.out.println("Key Released : " + e.getKeyCode());
+				// System.out.println("Key Released : " + e.getKeyCode());
 				player.setSpeed(0);
 			}
 			
