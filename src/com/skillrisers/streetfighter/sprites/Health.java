@@ -1,22 +1,20 @@
 package com.skillrisers.streetfighter.sprites;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import com.skillrisers.streetfighter.utils.GameConstants;
-
-import com.skillrisers.streetfighter.utils.GameConstants;
-
-public class Health extends CommonPlayer implements GameConstants{
-	Color color;
-	public Health(int x, Color color) {
+public class Health extends CommonPlayer{
+    String playerName;
+	public Health(int x, String playerName) {
 		this.x = x;
 		y = 20;
 		w = MAX_HEALTH;
 		h = 50;
         health=MAX_HEALTH;
-		this.color = color;
+		// this.color = color;
+        this.playerName= playerName;
 	}
     public void setHealth(){
         health= health - (int)(MAX_HEALTH*0.10);
@@ -30,9 +28,12 @@ public class Health extends CommonPlayer implements GameConstants{
 	
 	public void printHealth(Graphics pen) {
         pen.setColor(Color.RED);
+		pen.fillRect(x, y, w, h);
+		pen.setColor(Color.GREEN);
 		pen.fillRect(x, y, health, h);
-		pen.setColor(color);
-		pen.fillRect(x, y, health, h);
+        pen.setColor(Color.WHITE);
+        pen.setFont(new Font("times", Font.BOLD, 50));
+        pen.drawString(playerName, x, y+h+50);
 	}
 
     @Override
@@ -69,7 +70,7 @@ public class Health extends CommonPlayer implements GameConstants{
     
         throw new UnsupportedOperationException("Unimplemented method 'printHit'");
     }
-
+   
     // @Override
     // public BufferedImage flipPlayer() {
     //     // TODO Auto-generated method stub

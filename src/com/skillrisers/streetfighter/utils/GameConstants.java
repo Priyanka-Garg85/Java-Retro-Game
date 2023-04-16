@@ -16,9 +16,10 @@ public interface GameConstants {
 	int SPEED = 10;
 	int IDLE = 1;
 	int WALK = 2;
-	int KICK = 3;
+	int KICK = 5;
 	int CROUCH = 4;
-	int JUMP = 5;
+	int JUMP = 3;
 	int HIT = 6;
+	int POWER=7;
 	int GRAVITY = 9;
 }

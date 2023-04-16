@@ -17,6 +17,12 @@ public abstract class CommonPlayer implements GameConstants {
 	protected boolean isAttacking;
 	protected int force;
 	protected int health;
+	public int getHealth() {
+		return health;
+	}
+	public void setHealth(int health) {
+		this.health = health;
+	}
 	public abstract BufferedImage printIdle();
 	public abstract BufferedImage printWalk();
 	public abstract BufferedImage printJump();

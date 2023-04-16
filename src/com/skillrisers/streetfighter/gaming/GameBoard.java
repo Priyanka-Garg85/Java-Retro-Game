@@ -1,6 +1,8 @@
 package com.skillrisers.streetfighter.gaming;
 
 import java.awt.Color;
+import java.awt.Font;
+// import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +25,7 @@ public class GameBoard extends JPanel implements GameConstants {
 	private Player player;
 	private OpponentPlayer oppPlayer;
 	private Timer timer;
+	private boolean isGameOver;
 	private Health playerHealth;
 	private Health oppPlayerHealth;
 	public GameBoard() throws Exception {
@@ -57,8 +60,8 @@ public class GameBoard extends JPanel implements GameConstants {
 	}
 
 	public void loadHealth(){
-		oppPlayerHealth = new Health(70,Color.GREEN);
-		playerHealth = new Health(SCREENWIDTH-670, Color.GREEN);
+		playerHealth = new Health(70,"RYU");
+		oppPlayerHealth = new Health(SCREENWIDTH-670, "KEN");
 	}
 
 	public void printHealth(Graphics pen){
@@ -85,24 +88,36 @@ public class GameBoard extends JPanel implements GameConstants {
 	private void collision(){
 		if(isCollide()){
 			if(player.isAttacking()&&oppPlayer.isAttacking()){
-				if(player.isAttacking()){
+			}
+			else if(player.isAttacking()){
 					// oppPlayer.prinHitImages();
 				oppPlayer.setCurrentMove(HIT);
 				playerHealth.setHealth();;
 				}
-				else if(oppPlayer.isAttacking()){
+			else if(oppPlayer.isAttacking()){
 
 				}
+			if(playerHealth.getHealth()<=0|| oppPlayerHealth.getHealth()<=0){
+				isGameOver=true;
+
 			}
+			
 			// System.out.println("Collision Detected!!");
 			player.setCollide(true);
 			player.setSpeed(0);
 		}
+
 		else{
 			player.setSpeed(SPEED);
 			// System.out.println("No Collision...");
 			player.setCollide(false);
 		}
+	}
+	private void printGameOver(Graphics pen){
+		pen.setColor(Color.WHITE);
+		pen.setFont(new Font("times",Font.BOLD,80));
+		pen.drawString("Game Over!!", SCREENWIDTH/2 -160, SCREENHEIGHT/2-100);
+
 	}
 
 
@@ -119,6 +134,10 @@ public class GameBoard extends JPanel implements GameConstants {
 		if(player.getX()>oppPlayer.getX())
 		{
 			flipAll(pen);
+		}
+		if (isGameOver){
+			printGameOver(pen);
+			timer.stop();
 		}
 
 	}
@@ -177,12 +196,18 @@ public class GameBoard extends JPanel implements GameConstants {
 					player.setCurrentMove(KICK);
 					player.setAttacking(true);
 				}
+				else if(e.getKeyCode() == KeyEvent.VK_P) {
+					player.setCurrentMove(POWER);
+					player.showPower();
+					
+				}
 				// else if(e.getKeyCode() == KeyEvent.VK_P) {
 				// 	player.setCurrentMove(PUNCH);
 				// 	player.setAttacking(true);
 				// }
-				// else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-				// 	player.jump();
+				else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+					player.jump();
+				}
 				// 	oppPlayer.jump();
 				// 	player.setCurrentMove(JUMP);
 				// 	repaint();
@@ -229,7 +254,6 @@ public class GameBoard extends JPanel implements GameConstants {
 			}
 		});
 	}
-	
 	private void loadBackground() {
 		try {
 			bgImage = ImageIO.read(GameBoard.class.getResource(BACKGROUND));

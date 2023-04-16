@@ -1,18 +1,22 @@
 package com.skillrisers.streetfighter.sprites;
 // import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+// import java.lang.FdLibm.Pow;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 
 public class Player extends CommonPlayer {
 	
-	private BufferedImage idleImages[] = new BufferedImage[6];
-	private BufferedImage walkImages[] = new BufferedImage[6];
-	private BufferedImage jumpImages[] = new BufferedImage[6];
+	private BufferedImage idleImages[] = new BufferedImage[5];
+	private BufferedImage walkImages[] = new BufferedImage[5];
+	private BufferedImage jumpImages[] = new BufferedImage[5];
 	private BufferedImage crouchImages[] = new BufferedImage[2];
 	private BufferedImage LAttackImages[] = new BufferedImage[2];
 	private BufferedImage hitImages[] = new BufferedImage[2];
+	private BufferedImage powerImages[] = new BufferedImage[2];
 	private int force;
-	private BufferedImage[] kickImages;
+	private BufferedImage[] kickImages=new BufferedImage[5];
 	private BufferedImage[] punchImages; 
 	public Player() throws Exception {
 		x = 150;
@@ -26,8 +30,9 @@ public class Player extends CommonPlayer {
 		loadWalkImages();
 		loadJumpImages();
 		loadCrouchImages();
-		loadLAttackImages();
+		loadKickImages();
 		loadHitImages();
+		loadPowerImages();
 		// loadKickImages();
 		// loadPunchImages();
 	}
@@ -44,16 +49,14 @@ public class Player extends CommonPlayer {
 		idleImages[2] = playerImg.getSubimage(168,4,75,95);
 		idleImages[3] = playerImg.getSubimage(253,1,75,95);
 		idleImages[4] = playerImg.getSubimage(340,1,75,95);
-		idleImages[5] = playerImg.getSubimage(1,4,75,95);
 	}
-
+	
 	private void loadWalkImages() {
 		walkImages[0] = playerImg.getSubimage(1,4,75,95);
 		walkImages[1] = playerImg.getSubimage(81,4,75,95);
 		walkImages[2] = playerImg.getSubimage(168,4,75,95);
 		walkImages[3] = playerImg.getSubimage(253,1,75,95);
 		walkImages[4] = playerImg.getSubimage(340,1,75,95);
-		walkImages[5] = playerImg.getSubimage(1,4,75,95);
 	}
 
 	private void loadJumpImages() {
@@ -62,24 +65,28 @@ public class Player extends CommonPlayer {
 		jumpImages[2] = playerImg.getSubimage(168,4,75,95);
 		jumpImages[3] = playerImg.getSubimage(253,1,75,95);
 		jumpImages[4] = playerImg.getSubimage(340,1,75,95);
-		jumpImages[5] = playerImg.getSubimage(1,4,75,95);
 	}
+	private void loadPowerImages() {
+		powerImages[0] = playerImg.getSubimage(0,254,66,120);
+		powerImages[1] = playerImg.getSubimage(91,254,66,120);
+	}
+
 
 	private void loadCrouchImages() {
 		crouchImages[0] = playerImg.getSubimage(389,536,81,100);
 		crouchImages[1] = playerImg.getSubimage(378,536,81,100);
 	}
-	private void loadLAttackImages() {
-		crouchImages[0] = playerImg.getSubimage(277,255,100,117);
-		crouchImages[1] = playerImg.getSubimage(169,244,100,129);
-	}
-	// private void loadKickImages() {
-	// 	kickImages[0] = playerImg.getSubimage(56, 1458, 117, 247);
-	// 	kickImages[1] = playerImg.getSubimage(247, 1458, 123, 243);
-	// 	kickImages[2] = playerImg.getSubimage(428, 1461, 207, 243);
-	// 	kickImages[3] = playerImg.getSubimage(247, 1458, 123, 243);
-	// 	kickImages[4] = playerImg.getSubimage(56, 1458, 117, 247);
+	// private void loadLAttackImages() {
+	// 	kickImages[0] = playerImg.getSubimage(277,255,100,117);
+	// 	kickImages[1] = playerImg.getSubimage(169,244,100,129);
 	// }
+	private void loadKickImages() {
+		kickImages[0] = playerImg.getSubimage(0, 252, 95, 120);
+		kickImages[1] = playerImg.getSubimage(78, 252, 95, 120);
+		kickImages[2] = playerImg.getSubimage(166, 250, 95, 120);
+		kickImages[3] = playerImg.getSubimage(281, 252, 95, 120);
+		kickImages[4] = playerImg.getSubimage(375, 252, 95, 120);
+	}
 	
 	// private void loadPunchImages() {
 	// 	punchImages[0] = playerImg.getSubimage(43, 485, 119, 247);
@@ -88,7 +95,7 @@ public class Player extends CommonPlayer {
 	// } 
 	public BufferedImage printIdle() {
 		isAttacking = false;
-		if(imageIndex >= 6) {
+		if(imageIndex >= 5) {
 			imageIndex = 0;
 		}
 		BufferedImage img = idleImages[imageIndex];
@@ -97,7 +104,7 @@ public class Player extends CommonPlayer {
 	}
 
 	public BufferedImage printWalk() {
-		if(imageIndex >= 6) {
+		if(imageIndex >= 5) {
 			imageIndex = 0;
 			currentMove = WALK;
 			isAttacking=false;
@@ -108,7 +115,7 @@ public class Player extends CommonPlayer {
 		return img;
 	}
 	public BufferedImage printKick() {
-		if(imageIndex > 4) {
+		if(imageIndex >=5) {
 			imageIndex = 0;
 			currentMove = IDLE;
 			isAttacking = false;
@@ -131,7 +138,7 @@ public class Player extends CommonPlayer {
 		return img;
 	}
 	public BufferedImage printJump() {
-		if(imageIndex >= 6) {
+		if(imageIndex >= 5) {
 			imageIndex = 0;
 			currentMove = JUMP;
 		}
@@ -177,6 +184,27 @@ public class Player extends CommonPlayer {
 		imageIndex++;
 		return img;
 	}
+	public BufferedImage printPower() {
+		
+		if(imageIndex >= 2) {
+			imageIndex = 0;
+			isAttacking = false;
+			currentMove=IDLE;
+		}
+		BufferedImage img = powerImages[imageIndex];
+		imageIndex++;
+		return img;
+	}
+
+	ArrayList<PowerEffect> powers=new ArrayList<>();
+
+	public void showPower()
+	{
+		powers.add(new PowerEffect(x+w, y+h/2, playerImg));
+
+	}
+
+
 	@Override
 	public BufferedImage defaultImage() {
 		if(currentMove == WALK) {
@@ -184,6 +212,9 @@ public class Player extends CommonPlayer {
 		}
 		else if(currentMove == KICK) {
 			return printKick();
+		}
+		else if(currentMove == POWER) {
+			return printPower();
 		}
 		// else if(currentMove == PUNCH) {
 		// 	return printPunch();
