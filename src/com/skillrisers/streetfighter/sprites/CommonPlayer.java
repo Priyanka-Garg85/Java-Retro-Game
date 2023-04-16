@@ -13,12 +13,31 @@ public abstract class CommonPlayer implements GameConstants {
 	protected BufferedImage playerImg;
 	protected int imageIndex;
 	protected int currentMove;
+	protected boolean isCollide;
+	protected boolean isAttacking;
 	protected int force;
+	protected int health;
+	public int getHealth() {
+		return health;
+	}
+	public void setHealth(int health) {
+		this.health = health;
+	}
 	public abstract BufferedImage printIdle();
 	public abstract BufferedImage printWalk();
 	public abstract BufferedImage printJump();
+	public abstract BufferedImage printCrouch();
+	public abstract BufferedImage printLAttack();
+	public abstract BufferedImage printHit();
+	// public abstract BufferedImage flipPlayer();
+	// protected boolean isCollide;
+	// protected boolean isAttacking;
 	
 	
+	public boolean isAttacking() {return isAttacking;}
+	public void setAttacking(boolean isAttacking) {this.isAttacking = isAttacking;}
+	public boolean isCollide() {return isCollide;}
+	public void setCollide(boolean isCollide) {this.isCollide = isCollide;}
 	public int getCurrentMove() {return currentMove;}
 	public void setCurrentMove(int currentMove) {this.currentMove = currentMove;}
 	
@@ -42,11 +61,14 @@ public abstract class CommonPlayer implements GameConstants {
 	
 	public BufferedImage getPlayerImg() {return playerImg;}
 	public void setPlayerImg(BufferedImage playerImg) {this.playerImg = playerImg;}
+	public void flipPlayerImg() {this.playerImg = flip(defaultImage());}
 	
-	public void move() {x = x + speed;}
-	public void jump() {force = -50; y = y + force;}
+	public void move() {if(!isCollide){x = x + speed;}}
+	public void crouch() {}
+	public void jump() {force = -10; y = y + force;}
 	public void fall() {
 		if(y + force > GROUND) {
+			y = GROUND;
 			return;
 		}
 		force = force + GRAVITY;
@@ -64,17 +86,21 @@ public abstract class CommonPlayer implements GameConstants {
 		if(currentMove == WALK) {
 			return printWalk();
 		}
-		else if(currentMove == KICK) {
+		else if(currentMove == JUMP) {
 			return printJump();
+		}
+		else if(currentMove == CROUCH) {
+			return printCrouch();
 		}
 		else {
 			return printIdle();
 		}
+		
 	}
 
 	public BufferedImage flip(BufferedImage sprite) {
         BufferedImage img = new BufferedImage(sprite.getWidth(),sprite.getHeight(),BufferedImage.TYPE_INT_ARGB);
-		for(int xx = sprite.getWidth()-1;xx>0;xx--) {
+		for(int xx = sprite.getWidth()-1;xx>=0;xx--) {
 			for(int yy = 0;yy < sprite.getHeight();yy++) {
 				img.setRGB(sprite.getWidth()-xx, yy, sprite.getRGB(xx, yy));
 			}

@@ -1,6 +1,8 @@
 package com.skillrisers.streetfighter.gaming;
 
 import java.awt.Color;
+import java.awt.Font;
+// import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import com.skillrisers.streetfighter.sprites.Health;
 import com.skillrisers.streetfighter.sprites.OpponentPlayer;
 import com.skillrisers.streetfighter.sprites.Player;
 import com.skillrisers.streetfighter.utils.GameConstants;
@@ -22,35 +25,131 @@ public class GameBoard extends JPanel implements GameConstants {
 	private Player player;
 	private OpponentPlayer oppPlayer;
 	private Timer timer;
+	private boolean isGameOver;
+	private Health playerHealth;
+	private Health oppPlayerHealth;
 	public GameBoard() throws Exception {
 		player = new Player();
 		oppPlayer = new OpponentPlayer();
 		setFocusable(true);
 		loadBackground();
 		bindEvents();
+		loadHealth();
 		gameLoop();
 	}
 
 	private void gameLoop(){
-		timer = new Timer(100, new ActionListener() {
+		timer = new Timer(200, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				repaint();
+				if(player.getX()>oppPlayer.getX())
+				{
+					// player.flipPlayer();
+					// oppPlayer.flipPlayer();
+					// repaint();
+				}
 				player.fall();
+				oppPlayer.fall();
+				collision();
 			}
 
 		} );
 		timer.start();
 	}
 
+	public void loadHealth(){
+		playerHealth = new Health(70,"RYU");
+		oppPlayerHealth = new Health(SCREENWIDTH-670, "KEN");
+	}
+
+	public void printHealth(Graphics pen){
+		oppPlayerHealth.printHealth(pen);
+		playerHealth.printHealth(pen);
+
+	}
+	
+	// public void flipAll(Graphics pen){
+	// 	player.paintFlipPlayer(pen);
+	// 	oppPlayer.paintFlipPlayer(pen);
+	// 	repaint();
+	// }
+
+
+	private boolean isCollide(){
+		int xDistance = Math.abs(player.getX()-oppPlayer.getX());
+		int yDistance = Math.abs(player.getY()-oppPlayer.getY());
+		int maxH= Math.max(player.getH(), oppPlayer.getH());
+		int maxW= Math.max(player.getW(), oppPlayer.getW());
+		return xDistance <= maxW && yDistance <= maxH;
+	}
+
+	private void collision(){
+		if(isCollide()){
+			if(player.isAttacking()&&oppPlayer.isAttacking()){
+			}
+			else if(player.isAttacking()){
+					// oppPlayer.prinHitImages();
+				oppPlayer.setCurrentMove(HIT);
+				playerHealth.setHealth();;
+				}
+			else if(oppPlayer.isAttacking()){
+
+				}
+			if(playerHealth.getHealth()<=0|| oppPlayerHealth.getHealth()<=0){
+				isGameOver=true;
+
+			}
+			
+			// System.out.println("Collision Detected!!");
+			player.setCollide(true);
+			player.setSpeed(0);
+		}
+
+		else{
+			player.setSpeed(SPEED);
+			// System.out.println("No Collision...");
+			player.setCollide(false);
+		}
+	}
+	private void printGameOver(Graphics pen){
+		pen.setColor(Color.WHITE);
+		pen.setFont(new Font("times",Font.BOLD,80));
+		pen.drawString("Game Over!!", SCREENWIDTH/2 -160, SCREENHEIGHT/2-100);
+
+	}
+
+
 	@Override
 	public void paintComponent(Graphics pen) {
 		//System.out.println("Paint Component...");
 		paintBackground(pen);
 		player.paintPlayer(pen);
-		oppPlayer.paintFlipPlayer(pen);
+		oppPlayer.paintPlayer(pen);
+		printHealth(pen);
+		// flipAll(pen);
+		// oppPlayer.flipPlayer();
+		// oppPlayer.paintFlipPlayer(pen);
+		if(player.getX()>oppPlayer.getX())
+		{
+			flipAll(pen);
+		}
+		if (isGameOver){
+			printGameOver(pen);
+			timer.stop();
+		}
+
 	}
+	private void flipAll(Graphics pen) {
+		// player.flipPlayer();
+		// player.paintFlipPlayer(pen);
+		// oppPlayer.flipPlayer();
+		// oppPlayer.paintFlipPlayer(pen);
+		// repaint();
+		
+	}
+
 	private void paintBackground(Graphics pen) {
 		
 		pen.drawImage(bgImage, 0,0,SCREENWIDTH, SCREENHEIGHT, null);
@@ -71,42 +170,90 @@ public class GameBoard extends JPanel implements GameConstants {
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// System.out.println("Key Released : " + e.getKeyCode());
+				System.out.println("Key Released : " + e.getKeyCode());
 				player.setSpeed(0);
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				//System.out.println("Key Pressed : " + e.getKeyCode());
+				System.out.println("Key Pressed : " + e.getKeyCode());
 				if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+					
 					player.setSpeed(-SPEED);
 					player.move();
+					player.setCollide(false);
 					player.setCurrentMove(WALK);
-					repaint();
+					// repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					
 					player.setSpeed(SPEED);
 					player.move();
 					player.setCurrentMove(WALK);
-					repaint();
+					// repaint();
 				}
+				else if(e.getKeyCode() == KeyEvent.VK_K) {
+					player.setCurrentMove(KICK);
+					player.setAttacking(true);
+				}
+				else if(e.getKeyCode() == KeyEvent.VK_P) {
+					player.setCurrentMove(POWER);
+					player.showPower();
+					
+				}
+				// else if(e.getKeyCode() == KeyEvent.VK_P) {
+				// 	player.setCurrentMove(PUNCH);
+				// 	player.setAttacking(true);
+				// }
+				else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+					player.jump();
+				}
+				// 	oppPlayer.jump();
+				// 	player.setCurrentMove(JUMP);
+				// 	repaint();
+				// 	oppPlayer.setCurrentMove(JUMP);
+				// 	repaint();
+				// }
 				
 				if(e.getKeyCode() == KeyEvent.VK_A) {
+		
 					oppPlayer.setSpeed(-SPEED);
 					oppPlayer.move();
-					player.setCurrentMove(WALK);
+					oppPlayer.setCurrentMove(WALK);
 					repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_D) {
+					
 					oppPlayer.setSpeed(SPEED);
 					oppPlayer.move();
-					player.setCurrentMove(WALK);
+					oppPlayer.setCurrentMove(WALK);
 					repaint();
+				}
+				
+				if(e.getKeyCode() == KeyEvent.VK_UP) {
+					player.setCurrentMove(JUMP);
+					player.jump();
+					repaint();
+				}
+				else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+					player.setCurrentMove(CROUCH);
+					player.crouch();
+					repaint();
+				}
+
+				if(e.getKeyCode() == KeyEvent.VK_W) {
+					player.setCurrentMove(JUMP);
+					oppPlayer.jump();
+					// repaint();
+				}
+				else if(e.getKeyCode() == KeyEvent.VK_S) {
+					oppPlayer.setCurrentMove(CROUCH);
+					oppPlayer.crouch();
+					// repaint();
 				}
 			}
 		});
 	}
-	
 	private void loadBackground() {
 		try {
 			bgImage = ImageIO.read(GameBoard.class.getResource(BACKGROUND));
