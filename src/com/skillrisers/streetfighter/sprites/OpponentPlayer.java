@@ -129,13 +129,13 @@ public class OpponentPlayer extends CommonPlayer{
 
 	@Override
 	public BufferedImage printLAttack() {
-		// TODO Auto-generated method stub
+		
 		throw new UnsupportedOperationException("Unimplemented method 'printLAttack'");
 	}
 
 	@Override
 	public BufferedImage printHit() {
-		// TODO Auto-generated method stub
+		
 		throw new UnsupportedOperationException("Unimplemented method 'printHit'");
 	}
 	

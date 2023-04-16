@@ -18,6 +18,7 @@ import javax.swing.Timer;
 import com.skillrisers.streetfighter.sprites.Health;
 import com.skillrisers.streetfighter.sprites.OpponentPlayer;
 import com.skillrisers.streetfighter.sprites.Player;
+import com.skillrisers.streetfighter.sprites.PowerEffect;
 import com.skillrisers.streetfighter.utils.GameConstants;
 
 public class GameBoard extends JPanel implements GameConstants {
@@ -28,6 +29,8 @@ public class GameBoard extends JPanel implements GameConstants {
 	private boolean isGameOver;
 	private Health playerHealth;
 	private Health oppPlayerHealth;
+	private int bg_x= -500;
+	private int bg_w= SCREENWIDTH- 2*bg_x;
 	public GameBoard() throws Exception {
 		player = new Player();
 		oppPlayer = new OpponentPlayer();
@@ -92,11 +95,17 @@ public class GameBoard extends JPanel implements GameConstants {
 			else if(player.isAttacking()){
 					// oppPlayer.prinHitImages();
 				oppPlayer.setCurrentMove(HIT);
-				playerHealth.setHealth();;
+				oppPlayerHealth.setHealth();
+				oppPlayer.setAttacking(false);
 				}
+			else if(!player.isAttacking()){
+				oppPlayer.setCurrentMove(IDLE);
+			}
 			else if(oppPlayer.isAttacking()){
 
+
 				}
+			
 			if(playerHealth.getHealth()<=0|| oppPlayerHealth.getHealth()<=0){
 				isGameOver=true;
 
@@ -111,6 +120,7 @@ public class GameBoard extends JPanel implements GameConstants {
 			player.setSpeed(SPEED);
 			// System.out.println("No Collision...");
 			player.setCollide(false);
+			oppPlayer.setCollide(false);
 		}
 	}
 	private void printGameOver(Graphics pen){
@@ -128,6 +138,7 @@ public class GameBoard extends JPanel implements GameConstants {
 		player.paintPlayer(pen);
 		oppPlayer.paintPlayer(pen);
 		printHealth(pen);
+		printPower(pen);
 		// flipAll(pen);
 		// oppPlayer.flipPlayer();
 		// oppPlayer.paintFlipPlayer(pen);
@@ -149,10 +160,14 @@ public class GameBoard extends JPanel implements GameConstants {
 		// repaint();
 		
 	}
+	private void movebg(int speed){
+		bg_x=bg_x+speed;
+	}
 
 	private void paintBackground(Graphics pen) {
 		
-		pen.drawImage(bgImage, 0,0,SCREENWIDTH, SCREENHEIGHT, null);
+		
+		pen.drawImage(bgImage, bg_x,0,bg_w, SCREENHEIGHT, null);
 		
 		// pen.setColor(Color.GREEN);
 		// pen.fillRect(100, 10, 600,50);
@@ -172,6 +187,10 @@ public class GameBoard extends JPanel implements GameConstants {
 			public void keyReleased(KeyEvent e) {
 				System.out.println("Key Released : " + e.getKeyCode());
 				player.setSpeed(0);
+				player.setCurrentMove(IDLE);
+				oppPlayer.setCurrentMove(IDLE);
+				player.setAttacking(false);
+				oppPlayer.setAttacking(false);
 			}
 			
 			@Override
@@ -179,17 +198,28 @@ public class GameBoard extends JPanel implements GameConstants {
 				System.out.println("Key Pressed : " + e.getKeyCode());
 				if(e.getKeyCode() == KeyEvent.VK_LEFT) {
 					
-					player.setSpeed(-SPEED);
+					player.setSpeed(-SPEED/2);
 					player.move();
 					player.setCollide(false);
 					player.setCurrentMove(WALK);
+					oppPlayer.setSpeed(SPEED/2);
+					oppPlayer.move();
+					oppPlayer.setCollide(false);
+					movebg(SPEED/2);
+					player.setAttacking(false);
+					oppPlayer.setAttacking(false);
 					// repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					
-					player.setSpeed(SPEED);
+					player.setSpeed(SPEED/2);
 					player.move();
+					player.setCollide(false);
 					player.setCurrentMove(WALK);
+					oppPlayer.setSpeed(-SPEED/2);
+					oppPlayer.move();
+					oppPlayer.setCollide(false);
+					movebg(-SPEED/2);
 					// repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_K) {
@@ -217,28 +247,38 @@ public class GameBoard extends JPanel implements GameConstants {
 				
 				if(e.getKeyCode() == KeyEvent.VK_A) {
 		
-					oppPlayer.setSpeed(-SPEED);
-					oppPlayer.move();
+					player.setSpeed(SPEED/2);
+					player.move();
+					player.setCollide(false);
 					oppPlayer.setCurrentMove(WALK);
-					repaint();
+					oppPlayer.setSpeed(-SPEED/2);
+					oppPlayer.move();
+					oppPlayer.setCollide(false);
+					movebg(SPEED/2);
+					// repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_D) {
 					
-					oppPlayer.setSpeed(SPEED);
-					oppPlayer.move();
+					player.setSpeed(-SPEED/2);
+					player.move();
+					player.setCollide(false);
 					oppPlayer.setCurrentMove(WALK);
-					repaint();
+					oppPlayer.setSpeed(SPEED/2);
+					oppPlayer.move();
+					oppPlayer.setCollide(false);
+					movebg(-SPEED/2);
+					// repaint();
 				}
 				
 				if(e.getKeyCode() == KeyEvent.VK_UP) {
 					player.setCurrentMove(JUMP);
 					player.jump();
-					repaint();
+					// repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 					player.setCurrentMove(CROUCH);
 					player.crouch();
-					repaint();
+					// repaint();
 				}
 
 				if(e.getKeyCode() == KeyEvent.VK_W) {
@@ -253,6 +293,12 @@ public class GameBoard extends JPanel implements GameConstants {
 				}
 			}
 		});
+	}
+
+	private void printPower(Graphics pen){
+		for(PowerEffect power : player.getPowers()){
+			power.printPower(pen);
+		}
 	}
 	private void loadBackground() {
 		try {
