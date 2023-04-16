@@ -13,15 +13,19 @@ public abstract class CommonPlayer implements GameConstants {
 	protected BufferedImage playerImg;
 	protected int imageIndex;
 	protected int currentMove;
+	protected boolean isCollide;
+	protected boolean isAttacking;
 	protected int force;
+	protected int health;
 	public abstract BufferedImage printIdle();
 	public abstract BufferedImage printWalk();
 	public abstract BufferedImage printJump();
 	public abstract BufferedImage printCrouch();
 	public abstract BufferedImage printLAttack();
 	public abstract BufferedImage printHit();
-	protected boolean isCollide;
-	protected boolean isAttacking;
+	// public abstract BufferedImage flipPlayer();
+	// protected boolean isCollide;
+	// protected boolean isAttacking;
 	
 	
 	public boolean isAttacking() {return isAttacking;}
@@ -90,7 +94,7 @@ public abstract class CommonPlayer implements GameConstants {
 
 	public BufferedImage flip(BufferedImage sprite) {
         BufferedImage img = new BufferedImage(sprite.getWidth(),sprite.getHeight(),BufferedImage.TYPE_INT_ARGB);
-		for(int xx = sprite.getWidth()-1;xx>0;xx--) {
+		for(int xx = sprite.getWidth()-1;xx>=0;xx--) {
 			for(int yy = 0;yy < sprite.getHeight();yy++) {
 				img.setRGB(sprite.getWidth()-xx, yy, sprite.getRGB(xx, yy));
 			}

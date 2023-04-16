@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-// import com.skillrisers.streetfighter.sprites.Health;
+import com.skillrisers.streetfighter.sprites.Health;
 import com.skillrisers.streetfighter.sprites.OpponentPlayer;
 import com.skillrisers.streetfighter.sprites.Player;
 import com.skillrisers.streetfighter.utils.GameConstants;
@@ -23,26 +23,26 @@ public class GameBoard extends JPanel implements GameConstants {
 	private Player player;
 	private OpponentPlayer oppPlayer;
 	private Timer timer;
-	// private Health playerHealth;
-	// private Health oppPlayerHealth;
+	private Health playerHealth;
+	private Health oppPlayerHealth;
 	public GameBoard() throws Exception {
 		player = new Player();
 		oppPlayer = new OpponentPlayer();
 		setFocusable(true);
 		loadBackground();
 		bindEvents();
+		loadHealth();
 		gameLoop();
 	}
 
 	private void gameLoop(){
-		timer = new Timer(100, new ActionListener() {
+		timer = new Timer(200, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				repaint();
 				if(player.getX()>oppPlayer.getX())
 				{
-					
 					// player.flipPlayer();
 					// oppPlayer.flipPlayer();
 					// repaint();
@@ -56,22 +56,22 @@ public class GameBoard extends JPanel implements GameConstants {
 		timer.start();
 	}
 
-	// public void loadHealth(){
-	// 	oppPlayerHealth = new Health(30,Color.GREEN);
-	// 	playerHealth = new Health(SCREENWIDTH-600, Color.GREEN);
-	// }
-
-	// public void printHealth(Graphics pen){
-	// 	oppPlayerHealth.printHealth(pen);
-	// 	playerHealth.printHealth(pen);
-
-	// }
-
-	public void flipAll(Graphics pen){
-		player.paintFlipPlayer(pen);
-		oppPlayer.paintFlipPlayer(pen);
-		repaint();
+	public void loadHealth(){
+		oppPlayerHealth = new Health(70,Color.GREEN);
+		playerHealth = new Health(SCREENWIDTH-670, Color.GREEN);
 	}
+
+	public void printHealth(Graphics pen){
+		oppPlayerHealth.printHealth(pen);
+		playerHealth.printHealth(pen);
+
+	}
+	
+	// public void flipAll(Graphics pen){
+	// 	player.paintFlipPlayer(pen);
+	// 	oppPlayer.paintFlipPlayer(pen);
+	// 	repaint();
+	// }
 
 
 	private boolean isCollide(){
@@ -86,18 +86,21 @@ public class GameBoard extends JPanel implements GameConstants {
 		if(isCollide()){
 			if(player.isAttacking()&&oppPlayer.isAttacking()){
 				if(player.isAttacking()){
-
+					// oppPlayer.prinHitImages();
+				oppPlayer.setCurrentMove(HIT);
+				playerHealth.setHealth();;
 				}
 				else if(oppPlayer.isAttacking()){
 
 				}
 			}
-			System.out.println("Collision!!");
+			// System.out.println("Collision Detected!!");
 			player.setCollide(true);
 			player.setSpeed(0);
 		}
 		else{
 			player.setSpeed(SPEED);
+			// System.out.println("No Collision...");
 			player.setCollide(false);
 		}
 	}
@@ -108,22 +111,34 @@ public class GameBoard extends JPanel implements GameConstants {
 		//System.out.println("Paint Component...");
 		paintBackground(pen);
 		player.paintPlayer(pen);
+		oppPlayer.paintPlayer(pen);
+		printHealth(pen);
+		// flipAll(pen);
 		// oppPlayer.flipPlayer();
-		oppPlayer.paintFlipPlayer(pen);
+		// oppPlayer.paintFlipPlayer(pen);
 		if(player.getX()>oppPlayer.getX())
 		{
 			flipAll(pen);
 		}
 
 	}
+	private void flipAll(Graphics pen) {
+		// player.flipPlayer();
+		// player.paintFlipPlayer(pen);
+		// oppPlayer.flipPlayer();
+		// oppPlayer.paintFlipPlayer(pen);
+		// repaint();
+		
+	}
+
 	private void paintBackground(Graphics pen) {
 		
 		pen.drawImage(bgImage, 0,0,SCREENWIDTH, SCREENHEIGHT, null);
 		
-		pen.setColor(Color.GREEN);
-		pen.fillRect(100, 10, 600,50);
-		pen.setColor(Color.GREEN);
-		pen.fillRect(900, 10, 600,50);
+		// pen.setColor(Color.GREEN);
+		// pen.fillRect(100, 10, 600,50);
+		// pen.setColor(Color.GREEN);
+		// pen.fillRect(900, 10, 600,50);
 	}
 	
 	void bindEvents() {
@@ -144,41 +159,61 @@ public class GameBoard extends JPanel implements GameConstants {
 			public void keyPressed(KeyEvent e) {
 				System.out.println("Key Pressed : " + e.getKeyCode());
 				if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-					player.setCurrentMove(WALK);
+					
 					player.setSpeed(-SPEED);
-					player.setCollide(false);
 					player.move();
+					player.setCollide(false);
+					player.setCurrentMove(WALK);
 					// repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					player.setCurrentMove(WALK);
+					
 					player.setSpeed(SPEED);
 					player.move();
+					player.setCurrentMove(WALK);
 					// repaint();
 				}
+				else if(e.getKeyCode() == KeyEvent.VK_K) {
+					player.setCurrentMove(KICK);
+					player.setAttacking(true);
+				}
+				// else if(e.getKeyCode() == KeyEvent.VK_P) {
+				// 	player.setCurrentMove(PUNCH);
+				// 	player.setAttacking(true);
+				// }
+				// else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+				// 	player.jump();
+				// 	oppPlayer.jump();
+				// 	player.setCurrentMove(JUMP);
+				// 	repaint();
+				// 	oppPlayer.setCurrentMove(JUMP);
+				// 	repaint();
+				// }
 				
 				if(e.getKeyCode() == KeyEvent.VK_A) {
-					oppPlayer.setCurrentMove(WALK);
+		
 					oppPlayer.setSpeed(-SPEED);
 					oppPlayer.move();
-					// repaint();
+					oppPlayer.setCurrentMove(WALK);
+					repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_D) {
-					oppPlayer.setCurrentMove(WALK);
+					
 					oppPlayer.setSpeed(SPEED);
 					oppPlayer.move();
-					// repaint();
+					oppPlayer.setCurrentMove(WALK);
+					repaint();
 				}
 				
 				if(e.getKeyCode() == KeyEvent.VK_UP) {
 					player.setCurrentMove(JUMP);
 					player.jump();
-					// repaint();
+					repaint();
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 					player.setCurrentMove(CROUCH);
 					player.crouch();
-					// repaint();
+					repaint();
 				}
 
 				if(e.getKeyCode() == KeyEvent.VK_W) {

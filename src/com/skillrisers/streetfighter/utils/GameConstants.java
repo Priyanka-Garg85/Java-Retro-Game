@@ -8,7 +8,8 @@ public interface GameConstants {
 	GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 	int SCREENWIDTH = graphicsDevice.getDisplayMode().getWidth();
 	int SCREENHEIGHT = graphicsDevice.getDisplayMode().getHeight();
-	int GROUND = SCREENHEIGHT - 450;
+	int GROUND = SCREENHEIGHT - 400;
+	int MAX_HEALTH=600;
 	String BACKGROUND = ConfigReader.getValue("game.background.img");
 	String OPPONENT_IMAGE = ConfigReader.getValue("oppPlayer.img");
 	String PLAYER_IMAGE = ConfigReader.getValue("player.img");
