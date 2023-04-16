@@ -196,11 +196,14 @@ public class Player extends CommonPlayer {
 		return img;
 	}
 
-	ArrayList<PowerEffect> powers=new ArrayList<>();
+	private ArrayList<PowerEffect> powers=new ArrayList<>();
+	public ArrayList<PowerEffect> getPowers(){
+		return powers;
+	}
 
 	public void showPower()
 	{
-		powers.add(new PowerEffect(x+w, y+h/2, playerImg));
+		powers.add(new PowerEffect(x+w-25, y+h/2, playerImg));
 
 	}
 
